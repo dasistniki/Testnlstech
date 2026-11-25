@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Center OS</title>
+<meta name="description" content="Center OS – führe das Einkaufszentrum durch den Tag. Ein Leitstand-Spiel von Next Level Studios.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Center OS">
+<meta name="theme-color" content="#FDF8F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171616" media="(prefers-color-scheme: dark)">
+<link rel="preload" href="assets/null.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-tab="lage">
+<div class="bg" aria-hidden="true"></div>
+
+<!-- Kopfzeile: immer sichtbar -->
+<header class="hud glass" id="hud">
+  <div class="marke"><img src="assets/icon-180.png" alt=""><span class="null">Center OS</span></div>
+  <div class="hk"><small>Tag <span id="h-tag">1</span></small><b class="w" id="h-zeit">08<em>:</em>30</b></div>
+  <div class="hk"><small>Kasse</small><b class="w" id="h-geld">25.000 €</b><span class="sub" id="h-heute"></span></div>
+  <div class="hk hk-zufr"><small>Laune</small><b class="w" id="h-zufr">78<small>%</small></b><div class="balken"><span id="h-zufr-b"></span></div></div>
+  <div class="tempo" id="tempo" role="group" aria-label="Spieltempo">
+    <button type="button" data-t="0" aria-label="Pause" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+    <button type="button" data-t="1" aria-pressed="true">1×</button>
+    <button type="button" data-t="2" aria-pressed="false">2×</button>
+    <button type="button" data-t="4" aria-pressed="false">4×</button>
+  </div>
+</header>
+
+<main class="app" id="app">
+  <!-- LAGE -->
+  <section class="tab tab-lage" data-tab="lage" aria-label="Lage">
+    <div class="kpis">
+      <div class="chip glass"><small>Wetter</small><b id="h-wetter">Sonnig · 18 °C</b></div>
+      <div class="chip glass"><small>Besucher</small><b id="h-bes">0</b><span id="h-bes-sub">0 Besuche heute</span></div>
+      <div class="chip glass"><small>Parkhaus</small><b id="h-park">0 / 850</b><div class="balken"><span id="h-park-b"></span></div></div>
+      <div class="chip glass"><small>Energie</small><b id="h-en">0 kW</b><span id="h-en-sub">0 € / Std</span></div>
+    </div>
+    <div class="box glass">
+      <h3>Lageplan <span id="karte-hinweis">Zone antippen zum Steuern</span></h3>
+      <div class="karte" id="karte"><div class="evak">Evakuierung läuft</div></div>
+    </div>
+    <div class="box glass">
+      <h3>Einsätze <span id="ein-zahl">0 offen · 0 unterwegs</span></h3>
+      <div class="einsaetze" id="einsaetze"></div>
+      <div class="leer" id="ein-leer">Alles ruhig. Genieß den Moment.</div>
+    </div>
+  </section>
+
+  <!-- TEAM & STEUERUNG -->
+  <section class="tab tab-team" data-tab="team" aria-label="Team">
+    <div class="sheet-bg" id="sheet-bg"></div>
+    <div class="box glass sheet" id="steuerung" aria-label="Zonensteuerung">
+      <div class="griff" aria-hidden="true"></div>
+      <h3>Steuerung · <span id="st-zone">Zentrales Atrium</span><button type="button" class="zu-knopf" id="st-zu" aria-label="Schließen">✕</button></h3>
+      <div class="zonenwahl" id="zonenwahl"></div>
+      <div class="reihe"><span>Beleuchtung<small id="st-licht-info">130 kW</small></span><button class="schalter" id="st-licht" type="button" aria-label="Beleuchtung" aria-pressed="true"></button></div>
+      <div class="reihe"><span>Türen offen<small>Geschlossen kommt hier niemand rein</small></span><button class="schalter" id="st-tuer" type="button" aria-label="Türen" aria-pressed="true"></button></div>
+      <div class="reihe"><span id="st-spezial-name">Springbrunnen<small>Gäste lieben ihn</small></span><button class="schalter" id="st-spezial" type="button" aria-label="Spezial" aria-pressed="true"></button></div>
+      <div class="reihe regler">
+        <span><span>Klima</span><b id="st-temp-w">21 °C</b></span>
+        <div class="regel"><button type="button" class="rund" id="st-minus" aria-label="Kälter">−</button><input type="range" id="st-temp" min="16" max="27" step="0.5" aria-label="Temperatur"><button type="button" class="rund" id="st-plus" aria-label="Wärmer">+</button></div>
+        <small id="st-temp-info">Wohlfühlwert 21 °C</small>
+      </div>
+    </div>
+    <div class="box glass nur-mobil">
+      <h3>Zonen <span>antippen zum Steuern</span></h3>
+      <div class="zonenliste" id="zonenliste"></div>
+    </div>
+    <div class="box glass">
+      <h3>Personal <span id="lohn">156 € / Std</span></h3>
+      <div class="team" id="team"></div>
+    </div>
+    <div class="box glass">
+      <h3>Alarm</h3>
+      <p class="hinweis">Nur bei echtem Feuer. Eine Evakuierung ohne Grund verärgert die Gäste.</p>
+      <button class="btn rot breit" id="alarm" type="button">Evakuieren</button>
+    </div>
+  </section>
+
+  <!-- ZIELE -->
+  <section class="tab tab-ziele" data-tab="ziele" aria-label="Ziele">
+    <div class="box glass">
+      <h3>Heute zu tun</h3>
+      <div class="level"><span class="lv" id="lv">1</span><div class="lv-text"><div class="lv-zeile"><span id="lv-name">Praktikant</span><span id="lv-xp">0 / 150 XP</span></div><div class="balken"><span id="lv-b"></span></div></div></div>
+      <div id="aufgaben"></div>
+    </div>
+    <div class="diagramme">
+      <div class="box glass"><h3>Besucher</h3><canvas id="c-bes"></canvas></div>
+      <div class="box glass"><h3>Kasse</h3><canvas id="c-geld"></canvas></div>
+    </div>
+    <div class="box glass">
+      <h3>Spiel</h3>
+      <div class="reihe"><span>Vibration<small>Kurzes Brummen bei neuen Einsätzen</small></span><button class="schalter" id="e-vib" type="button" aria-label="Vibration" aria-pressed="true"></button></div>
+      <div class="reihe"><span>Schneller Vorlauf<small>Außerhalb der Öffnungszeit läuft die Zeit 3× so schnell</small></span><button class="schalter" id="e-vorlauf" type="button" aria-label="Schneller Vorlauf" aria-pressed="true"></button></div>
+      <div class="knopfreihe">
+        <button class="btn" id="hilfe-auf" type="button">So geht’s</button>
+        <button class="btn" id="installieren" type="button" hidden>App installieren</button>
+        <button class="btn" id="neu" type="button">Neues Spiel</button>
+      </div>
+      <p class="hinweis" id="ios-hinweis" hidden>Als App nutzen: in Safari auf „Teilen“ tippen und „Zum Home-Bildschirm“ wählen.</p>
+    </div>
+  </section>
+
+  <!-- AUSBAU -->
+  <section class="tab tab-ausbau" data-tab="ausbau" aria-label="Ausbau">
+    <h2 class="sec">Ausbauen <span id="shop-geld"></span></h2>
+    <div class="shop" id="shop"></div>
+  </section>
+</main>
+
+<nav class="tabs glass" id="tabs" aria-label="Bereiche">
+  <button type="button" data-tab="lage" aria-current="page"><svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>Lage</span><i class="badge" id="badge-lage" hidden></i></button>
+  <button type="button" data-tab="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg><span>Team</span></button>
+  <button type="button" data-tab="ziele"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>Ziele</span><i class="badge punkt" id="badge-ziele" hidden></i></button>
+  <button type="button" data-tab="ausbau"><svg viewBox="0 0 24 24"><path d="M4 8h16l-1.5 12h-13z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Ausbau</span><i class="badge punkt" id="badge-ausbau" hidden></i></button>
+</nav>
+
+<div class="dialog" id="bericht" hidden><div class="karte2 glass" role="dialog" aria-modal="true" aria-labelledby="b-titel">
+  <span class="eyebrow"><i></i><span id="b-tag">Tag 1</span> · Ladenschluss</span>
+  <h2 id="b-titel">Feierabend</h2>
+  <div class="sterne" id="b-sterne"></div>
+  <div class="zeilen" id="b-zeilen"></div>
+  <button class="btn primary breit" id="b-weiter" type="button">Nächster Tag</button>
+</div></div>
+
+<div class="dialog" id="brand" hidden><div class="karte2 glass" role="alertdialog" aria-modal="true" aria-labelledby="brand-titel">
+  <span class="eyebrow rot-text"><i class="rot-punkt"></i>Brandmeldeanlage</span>
+  <h2 id="brand-titel">Feueralarm</h2>
+  <p class="lead" id="brand-text"></p>
+  <div class="entscheid"><button class="btn rot" id="brand-evak" type="button">Sofort evakuieren</button><button class="btn" id="brand-pruef" type="button">Technik prüfen lassen</button></div>
+  <p class="hinweis">Evakuieren kostet Umsatz. Ein echter Brand ohne Evakuierung kostet viel mehr.</p>
+</div></div>
+
+<div class="dialog" id="frage" hidden><div class="karte2 glass" role="alertdialog" aria-modal="true" aria-labelledby="frage-text">
+  <h2 class="klein" id="frage-text">Sicher?</h2>
+  <div class="entscheid"><button class="btn" id="frage-nein" type="button">Abbrechen</button><button class="btn rot" id="frage-ja" type="button">Ja</button></div>
+</div></div>
+
+<div class="dialog" id="hilfe" hidden><div class="karte2 glass links" role="dialog" aria-modal="true" aria-labelledby="hilfe-titel">
+  <span class="eyebrow"><i></i>Leitstand-Spiel</span>
+  <h2 id="hilfe-titel">So geht’s</h2>
+  <ol class="regeln">
+    <li><b>Einsätze abarbeiten.</b> Tippe einen roten Punkt auf dem Lageplan oder eine Karte in der Liste an, dann geht das passende Team los. Wartet ein Einsatz zu lange, wird er schlimmer.</li>
+    <li><b>Zonen steuern.</b> Tippe eine Zone an, um Licht, Türen, Klima und Extras zu schalten. Jedes Grad weg von der Außentemperatur kostet Strom, und alles weit weg von 21 °C drückt die Laune.</li>
+    <li><b>Feueralarm.</b> Nur etwa jeder dritte Alarm ist echt. Prüfen ist günstig, aber ein echter Brand muss schnell evakuiert werden.</li>
+    <li><b>Ausbauen.</b> Von deinem Gewinn kaufst du Personal und Technik. Mit jedem Level wird mehr freigeschaltet.</li>
+  </ol>
+  <p class="hinweis">Tempo: Pause, 1×, 2× oder 4×. Auf der Tastatur: Leertaste und die Tasten 1, 2, 4. Das Spiel pausiert, sobald du die App verlässt.</p>
+  <button class="btn primary breit" id="hilfe-zu" type="button">Los geht’s</button>
+</div></div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="foot"><span class="null">Next Level Studios</span> · Center OS – ein Spiel, alle Werte sind erfunden</div>
+
+<script src="app.js"></script>
+</body>
+</html>
